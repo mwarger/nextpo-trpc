@@ -44,3 +44,16 @@ yarn-error.log*
 /.pnp
 .pnp.js
 # @end @expo/next-adapter
+
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# vercel
+.vercel
+
+*.db
+*.db-journal
+prisma/_sqlite/migrations

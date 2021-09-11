@@ -1,34 +1,44 @@
-// Use next.js page for the mobile app
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { Link, useRouting } from 'expo-next-react-navigation';
+import React, { useState } from 'react'
+import { NavigationContainer } from '@react-navigation/native'
 
-import { DripsyProvider, View, Text, Button } from 'dripsy';
-import { StyleSheet } from 'react-native';
-import AppIndex from './src/pages';
-import { theme } from './src/theme/theme';
-import { createStackNavigator } from '@react-navigation/stack';
-import { enableScreens } from 'react-native-screens';
-import Profile from './src/pages/profile';
-// import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-const Stack = createStackNavigator();
+import { DripsyProvider } from 'dripsy'
+import AppIndex from './src/pages'
+import { theme } from './src/theme/theme'
+import { createStackNavigator } from '@react-navigation/stack'
+import Profile from './src/pages/profile'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { trpc } from './src/utils/trpc'
+import { getBaseUrl } from './src/utils/getBaseUrl'
+import superjson from 'superjson'
+const Stack = createStackNavigator()
 
 export default function App() {
-	return (
-		<NavigationContainer>
-			<DripsyProvider theme={theme}>
-				<Stack.Navigator>
-					<Stack.Screen
-						name='home'
-						component={AppIndex}
-						options={{
-							title: 'Home',
-						}}
-					/>
-					<Stack.Screen name='profile' component={Profile} />
-				</Stack.Navigator>
-			</DripsyProvider>
-		</NavigationContainer>
-	);
+  const [queryClient] = useState(() => new QueryClient())
+  const [trpcClient] = useState(() =>
+    trpc.createClient({
+      url: `${getBaseUrl()}/api/trpc`,
+      transformer: superjson,
+    }),
+  )
+
+  return (
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <NavigationContainer>
+          <DripsyProvider theme={theme}>
+            <Stack.Navigator>
+              <Stack.Screen
+                name="home"
+                component={AppIndex}
+                options={{
+                  title: 'Home',
+                }}
+              />
+              <Stack.Screen name="profile" component={Profile} />
+            </Stack.Navigator>
+          </DripsyProvider>
+        </NavigationContainer>
+      </QueryClientProvider>
+    </trpc.Provider>
+  )
 }
