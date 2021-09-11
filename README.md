@@ -15,13 +15,13 @@ See \_app.tsx for setup.
 TRPC setup using react-query (only addition at this point is superjson transformer)
 See App.tsx for this
 
-===== NextJS Readme copied below
+### NextJS Readme copied below
 
-# Prisma + tRPC
+#### Prisma + tRPC
 
 Try in CodeSandbox: [https://githubbox.com/trpc/trpc/tree/main/examples/next-prisma-starter](https://codesandbox.io/s/github/trpc/trpc/tree/main/examples/next-prisma-starter?file=/src/pages/index.tsx)
 
-## Features
+#### Features
 
 - 🧙‍♂️ E2E typesafety with [tRPC](https://trpc.io)
 - ⚡ Full-stack React with Next.js
@@ -32,7 +32,7 @@ Try in CodeSandbox: [https://githubbox.com/trpc/trpc/tree/main/examples/next-pri
   - ✅ E2E testing with [Playwright](https://playwright.dev/)
   - ✅ Linting
 
-## Setup
+#### Setup
 
 ```bash
 npx create-next-app --example https://github.com/trpc/trpc --example-path examples/next-prisma-starter trpc-prisma-starter
@@ -41,7 +41,7 @@ yarn
 yarn dev
 ```
 
-## Files of note
+#### Files of note
 
 <table>
   <thead>
@@ -66,7 +66,7 @@ yarn dev
   </tbody>
 </table>
 
-## Commands
+#### Commands
 
 ```bash
 yarn dx # runs prisma studio + next
@@ -76,7 +76,7 @@ yarn test-start # runs e2e tests on `next start` - build required before
 yarn dev-nuke # resets local db
 ```
 
-## ℹ️ How to switch from SQLite to Postgres
+#### ℹ️ How to switch from SQLite to Postgres
 
 How to switch to postgres
 
