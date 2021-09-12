@@ -19,6 +19,8 @@ See App.tsx for this
 
 A basic react-admin (https://marmelab.com/react-admin/) implementation is available at `/admin` - it uses a data-provider to allow react-admin access via TRPC. I don't know if this is a good idea, but it was fun to figure out. It's not typed, because I don't see how it could be... at least not yet.
 
+I didn't use ra-data-prisma (https://github.com/panter/ra-data-prisma) directly because, as far as I can tell, it requires a Nexus adapter for use, and I'm not using GraphQL with this.
+
 ### NextJS Readme copied below
 
 #### Prisma + tRPC

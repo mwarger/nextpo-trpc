@@ -126,7 +126,9 @@ export default function TrpcDataProvider(trpcClient: any): DataProvider {
     },
 
     delete: (resource, params) => {
-      return trpcClient.mutation(`${resource}.delete`, params.id)
+      return trpcClient
+        .mutation(`${resource}.delete`, params.id)
+        .then((response: any) => ({ data: response }))
     },
 
     // json-server doesn't handle filters on DELETE route, so we fallback to calling DELETE n times instead
