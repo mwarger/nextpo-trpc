@@ -6,10 +6,11 @@
 import { createRouter } from '../trpc'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
+import zodToJsonSchema from 'zod-to-json-schema'
 
 export const workoutRouter = createRouter()
   // create
-  .mutation('add', {
+  .mutation('create', {
     input: z.object({
       id: z.string().uuid().optional(),
       title: z.string().min(1).max(32),
@@ -23,23 +24,17 @@ export const workoutRouter = createRouter()
     },
   })
   // read
-  .query('all', {
+  .query('getMany', {
     async resolve({ ctx }) {
       /**
        * For pagination you can have a look at this docs site
        * @link https://trpc.io/docs/useInfiniteQuery
        */
 
-      return ctx.prisma.workout.findMany({
-        select: {
-          id: true,
-          title: true,
-          description: true,
-        },
-      })
+      return ctx.prisma.workout.findMany()
     },
   })
-  .query('byId', {
+  .query('getOne', {
     input: z.string(),
     async resolve({ ctx, input }) {
       const workout = await ctx.prisma.workout.findUnique({
@@ -51,11 +46,11 @@ export const workoutRouter = createRouter()
           message: `No workout with id '${input}'`,
         })
       }
-      return workout
+      return { data: workout }
     },
   })
   // update
-  .mutation('edit', {
+  .mutation('update', {
     input: z.object({
       id: z.string().uuid(),
       data: z.object({
@@ -77,6 +72,6 @@ export const workoutRouter = createRouter()
     input: z.string().uuid(),
     async resolve({ input: id, ctx }) {
       await ctx.prisma.workout.delete({ where: { id } })
-      return id
+      return { data: id }
     },
   })
