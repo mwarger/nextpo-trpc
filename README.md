@@ -15,6 +15,10 @@ See \_app.tsx for setup.
 TRPC setup using react-query (only addition at this point is superjson transformer)
 See App.tsx for this
 
+### React Admin
+
+A basic react-admin (https://marmelab.com/react-admin/) implementation is available at `/admin` - it uses a data-provider to allow react-admin access via TRPC. I don't know if this is a good idea, but it was fun to figure out. It's not typed, because I don't see how it could be... at least not yet.
+
 ### NextJS Readme copied below
 
 #### Prisma + tRPC

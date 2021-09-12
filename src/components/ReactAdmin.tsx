@@ -37,24 +37,17 @@ const dataProvider = jsonServerProvider('https://jsonplaceholder.typicode.com')
 // );
 
 const ReactAdmin = () => {
-  const router = useRouter()
-  const history = createBrowserHistory()
-  const [queryClient] = useState(() => new QueryClient())
   const [trpcClient] = useState(() =>
     createTRPCClient<AppRouter>({
-      url: 'http://localhost:3000/api/trpc',
+      url: `${getBaseUrl()}/api/trpc`,
       transformer: superjson,
     }),
   )
 
-  // trpcClient.mutation('workout.create')
-  // trpcClient.query('workout.getOne', "1")
   const trpcDataProvider = TrpcDataProvider(trpcClient)
 
   return (
     <Admin dataProvider={trpcDataProvider}>
-      {/* <Resource name="posts" list={ListGuesser} /> */}
-      {/* <Resource name="users" list={ListGuesser} /> */}
       <Resource
         name="workout"
         list={ListGuesser}

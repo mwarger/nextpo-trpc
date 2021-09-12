@@ -120,7 +120,6 @@ export default function TrpcDataProvider(trpcClient: any): DataProvider {
       ).then((responses) => ({ data: responses.map(({ json }) => json.id) })),
 
     create: (resource, params) => {
-      console.log('creating', resource, params.data)
       return trpcClient
         .mutation(`${resource}.create`, params.data)
         .then((response: any) => ({ data: response }))
