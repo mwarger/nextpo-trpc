@@ -3,7 +3,7 @@
  */
 import superjson from 'superjson'
 import { createRouter } from '../trpc'
-import { workoutRouter } from './workout'
+import { createReactAdminRouter, workoutRouter } from './workout'
 
 /**
  * Create your application's root router
@@ -22,6 +22,9 @@ export const appRouter = createRouter()
    * @link https://trpc.io/docs/error-formatting
    */
   // .formatError(({ shape, error }) => { })
-  .merge('workout.', workoutRouter)
+  .merge('workout', createReactAdminRouter('workout', workoutRouter)) // will extend existing router
+  .merge('user', createReactAdminRouter('user', createRouter())) // can just create a router if you only need defaults
+
+console.log('appRouter', appRouter._def)
 
 export type AppRouter = typeof appRouter

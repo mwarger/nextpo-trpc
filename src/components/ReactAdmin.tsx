@@ -3,38 +3,17 @@ import {
   Admin,
   ListGuesser,
   Resource,
-  List,
-  Datagrid,
-  ReferenceField,
   ShowGuesser,
   EditGuesser,
   Create,
   SimpleForm,
   TextInput,
 } from 'react-admin'
-import { QueryClient } from 'react-query'
 import { getBaseUrl } from '../utils/getBaseUrl'
-import { trpc } from '../utils/trpc'
-import jsonServerProvider from './ra-data-json-server'
-import TrpcDataProvider from './ra-data-trpc'
+import { createTRPCDataProvider } from './ra-data-trpc'
 import superjson from 'superjson'
 import { createTRPCClient } from '@trpc/client'
 import { AppRouter } from '../server/routers/app'
-import { useRouter } from 'next/router'
-import { createBrowserHistory } from 'history'
-
-const dataProvider = jsonServerProvider('https://jsonplaceholder.typicode.com')
-
-// export const PostList = props => (
-//   <List {...props}>
-//       <Datagrid rowClick="edit">
-//           <ReferenceField source="userId" reference="users"><TextField source="id" /></ReferenceField>
-//           <TextField source="id" />
-//           <TextField source="title" />
-//           <TextField source="body" />
-//       </Datagrid>
-//   </List>
-// );
 
 const ReactAdmin = () => {
   const [trpcClient] = useState(() =>
@@ -44,7 +23,15 @@ const ReactAdmin = () => {
     }),
   )
 
-  const trpcDataProvider = TrpcDataProvider(trpcClient)
+  // supabase adapter lets you pass in resources, let's try it
+  // this is only used in the `getOne` method for now
+  // change this to see react-admin change what is shown on the edit/show page types
+  const resources: Record<string, string[]> = {
+    workout: ['id', 'title'],
+    // workout: ['id', 'title', 'description'],
+  }
+
+  const trpcDataProvider = createTRPCDataProvider(trpcClient, resources)
 
   return (
     <Admin dataProvider={trpcDataProvider}>
@@ -54,6 +41,13 @@ const ReactAdmin = () => {
         show={ShowGuesser}
         edit={EditGuesser}
         create={WorkoutCreate}
+      />
+      <Resource
+        name="user"
+        list={ListGuesser}
+        show={ShowGuesser}
+        edit={EditGuesser}
+        // create={WorkoutCreate}
       />
     </Admin>
   )

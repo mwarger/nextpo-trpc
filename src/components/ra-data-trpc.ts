@@ -37,7 +37,10 @@ import { z } from 'zod'
  *
  * export default App;
  */
-export default function TrpcDataProvider(trpcClient: any): DataProvider {
+export function createTRPCDataProvider(
+  trpcClient: any,
+  resources: Record<string, string[]>,
+): DataProvider {
   return {
     getList: (resource, params) => {
       // const { page, perPage } = params.pagination
@@ -64,7 +67,7 @@ export default function TrpcDataProvider(trpcClient: any): DataProvider {
       //     ),
       //   }
       // })
-      return trpcClient.query(`${resource}.getMany`).then((results: any) => {
+      return trpcClient.query(`${resource}getMany`).then((results: any) => {
         return {
           data: results,
           total: parseInt(results.length ?? '', 10),
@@ -73,7 +76,10 @@ export default function TrpcDataProvider(trpcClient: any): DataProvider {
     },
 
     getOne: (resource, params) => {
-      return trpcClient.query(`${resource}.getOne`, params.id)
+      return trpcClient.query(`${resource}getOne`, {
+        id: params.id,
+        select: resources[resource],
+      })
     },
 
     getMany: (resource, params) => {
@@ -81,7 +87,7 @@ export default function TrpcDataProvider(trpcClient: any): DataProvider {
       const query = {
         id: params.ids,
       }
-      return trpcClient.query([`${resource}.getMany`, query])
+      return trpcClient.query([`${resource}getMany`, query])
     },
 
     getManyReference: (resource, params) => {
@@ -98,7 +104,7 @@ export default function TrpcDataProvider(trpcClient: any): DataProvider {
       // const url = `${apiUrl}/${resource}?${stringify(query)}`
 
       return trpcClient
-        .query([`${resource}.getMany`, query])
+        .query([`${resource}getMany`, query])
         .then((results: any) => {
           return {
             data: results,
@@ -109,32 +115,32 @@ export default function TrpcDataProvider(trpcClient: any): DataProvider {
 
     update: (resource, params) => {
       return trpcClient
-        .mutation(`${resource}.update`, params)
+        .mutation(`${resource}update`, params)
         .then((response: any) => ({ data: response }))
     },
 
     // json-server doesn't handle filters on UPDATE route, so we fallback to calling UPDATE n times instead
     updateMany: (resource, params) =>
       Promise.all(
-        params.ids.map((id) => trpcClient.mutation(`${resource}.update`, id)),
+        params.ids.map((id) => trpcClient.mutation(`${resource}update`, id)),
       ).then((responses) => ({ data: responses.map(({ json }) => json.id) })),
 
     create: (resource, params) => {
       return trpcClient
-        .mutation(`${resource}.create`, params.data)
+        .mutation(`${resource}create`, params.data)
         .then((response: any) => ({ data: response }))
     },
 
     delete: (resource, params) => {
       return trpcClient
-        .mutation(`${resource}.delete`, params.id)
+        .mutation(`${resource}delete`, params.id)
         .then((response: any) => ({ data: response }))
     },
 
     // json-server doesn't handle filters on DELETE route, so we fallback to calling DELETE n times instead
     deleteMany: (resource, params) =>
       Promise.all(
-        params.ids.map((id) => trpcClient.mutation(`${resource}.delete`, id)),
+        params.ids.map((id) => trpcClient.mutation(`${resource}delete`, id)),
       ).then((responses) => ({ data: responses.map((item) => item) })),
   }
 }

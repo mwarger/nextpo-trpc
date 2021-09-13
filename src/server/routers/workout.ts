@@ -8,70 +8,86 @@ import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 import zodToJsonSchema from 'zod-to-json-schema'
 
-export const workoutRouter = createRouter()
-  // create
-  .mutation('create', {
-    input: z.object({
-      id: z.string().uuid().optional(),
-      title: z.string().min(1).max(32),
-      description: z.string().min(1),
-    }),
-    async resolve({ ctx, input }) {
-      const todo = await ctx.prisma.workout.create({
-        data: input,
+export function createReactAdminRouter(key: string, router: any) {
+  console.log('router', router)
+  return (
+    router
+      // create
+      .mutation('create', {
+        input: z.record(z.string().or(z.number()).or(z.boolean())),
+        async resolve({ ctx, input }: any) {
+          const record = await ctx.prisma[key].create({
+            data: input,
+          })
+          return record
+        },
       })
-      return todo
-    },
-  })
-  // read
-  .query('getMany', {
-    async resolve({ ctx }) {
-      /**
-       * For pagination you can have a look at this docs site
-       * @link https://trpc.io/docs/useInfiniteQuery
-       */
+      // read
+      .query('getMany', {
+        async resolve({ ctx }: any) {
+          /**
+           * For pagination you can have a look at this docs site
+           * @link https://trpc.io/docs/useInfiniteQuery
+           */
+          return ctx.prisma[key].findMany()
+        },
+      })
+      .query('getOne', {
+        input: z.object({
+          id: z.string().min(1).or(z.number().min(1)),
+          select: z.array(z.string()).optional(),
+        }),
+        async resolve({ ctx, input }: any) {
+          const record = await ctx.prisma[key].findUnique({
+            where: { id: input.id },
+            select:
+              input.select && input.select.length > 0
+                ? input.select.reduce(
+                    (prev: Record<string, boolean>, cur: string) => ({
+                      ...prev,
+                      [cur]: true,
+                    }),
+                    {},
+                  )
+                : undefined,
+          })
+          if (!record) {
+            throw new TRPCError({
+              code: 'NOT_FOUND',
+              message: `No ${key} with id '${input}'`,
+            })
+          }
+          return { data: record }
+        },
+      })
+      // update
+      .mutation('update', {
+        input: z.object({
+          id: z.string().min(1).or(z.number().min(1)),
+          data: z.record(z.string().or(z.number()).or(z.boolean())),
+        }),
+        async resolve({ ctx, input }: any) {
+          const { id, data } = input
+          const record = await ctx.prisma[key].update({
+            where: { id },
+            data,
+          })
+          return record
+        },
+      })
+      // delete
+      .mutation('delete', {
+        input: z.string().min(1).or(z.number().min(1)),
+        async resolve({ input: id, ctx }: any) {
+          await ctx.prisma[key].delete({ where: { id } })
+          return { data: id }
+        },
+      })
+  )
+}
 
-      return ctx.prisma.workout.findMany()
-    },
-  })
-  .query('getOne', {
-    input: z.string(),
-    async resolve({ ctx, input }) {
-      const workout = await ctx.prisma.workout.findUnique({
-        where: { id: input },
-      })
-      if (!workout) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: `No workout with id '${input}'`,
-        })
-      }
-      return { data: workout }
-    },
-  })
-  // update
-  .mutation('update', {
-    input: z.object({
-      id: z.string().uuid(),
-      data: z.object({
-        title: z.string().min(1).max(32).optional(),
-        description: z.string().min(1).optional(),
-      }),
-    }),
-    async resolve({ ctx, input }) {
-      const { id, data } = input
-      const todo = await ctx.prisma.workout.update({
-        where: { id },
-        data,
-      })
-      return todo
-    },
-  })
-  // delete
-  .mutation('delete', {
-    input: z.string().uuid(),
-    async resolve({ input: id, ctx }) {
-      await ctx.prisma.workout.delete({ where: { id } })
-      return { data: id }
-    },
-  })
+export const workoutRouter = createRouter().query('hello', {
+  async resolve({ ctx }: any) {
+    return { data: 'extra test item' }
+  },
+})
