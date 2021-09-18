@@ -1,9 +1,4 @@
-import { TRPCClient, TRPCRequestOptions } from '@trpc/client'
-import { AnyRouter, TRPCError } from '@trpc/server'
-import { stringify } from 'query-string'
-import { fetchUtils, DataProvider, GetOneParams } from 'ra-core'
-import * as trpc from '@trpc/server'
-import { z } from 'zod'
+import { fetchUtils, DataProvider } from 'ra-core'
 
 /**
  * Maps react-admin queries to a json-server powered REST API
