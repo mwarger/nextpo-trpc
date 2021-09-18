@@ -29,6 +29,4 @@ export const appRouter = createRouter()
   // can just create a router if you only need defaults
   .merge('user', createReactAdminRouter('user', createRouter()))
 
-console.log('appRouter', appRouter._def)
-
 export type AppRouter = typeof appRouter
