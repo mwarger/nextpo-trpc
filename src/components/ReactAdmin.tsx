@@ -10,7 +10,7 @@ import {
   TextInput,
 } from 'react-admin'
 import { getBaseUrl } from '../utils/getBaseUrl'
-import { createTRPCDataProvider } from 'trpc-react-admin/client'
+import { createTRPCDataProvider } from 'ra-trpc/client'
 import superjson from 'superjson'
 import { createTRPCClient } from '@trpc/client'
 import { AppRouter } from '../server/routers/app'

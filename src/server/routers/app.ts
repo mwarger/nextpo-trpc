@@ -4,7 +4,7 @@
 import superjson from 'superjson'
 import { createRouter } from '../trpc'
 import { workoutRouter } from './workout'
-import { createReactAdminRouter } from 'trpc-react-admin/server'
+import { createReactAdminRouter } from 'ra-trpc/server'
 
 /**
  * Create your application's root router
